@@ -33,7 +33,11 @@ class CPHInline
     {
         subathonSecondsLeft--;
         TimeSpan time = TimeSpan.FromSeconds(subathonSecondsLeft);
-        string countdownString = time.ToString(@"d' days 'hh\:mm\:ss");
+        //string countdownString = time.ToString(@"d' days 'hh\:mm\:ss");
+		string countdownString = string.Format("{0}:{1}:{2}", 
+            (int) time.TotalHours, 
+            time.ToString("mm"), 
+            time.ToString("ss"));
         if (subathonSecondsLeft == 0)
         {
             StopSubathon("Subathon Complete!");
@@ -61,9 +65,9 @@ class CPHInline
         countdownTimer.Stop();
     }
 
-    private void AddMinutes(int minutesToAdd)
+    private void AddMinutes(double minutesToAdd)
     {
-        int secondsToAdd = minutesToAdd * 60;
+		int secondsToAdd = Convert.ToInt32(Math.Floor(minutesToAdd * 60));
         if ((subathontotalTimeInSeconds + secondsToAdd) < subathonCapInSeconds)
         {
             subathontotalTimeInSeconds = subathontotalTimeInSeconds + secondsToAdd;
@@ -95,7 +99,7 @@ class CPHInline
 
     public bool AddTime()
     {
-        int minuteValue = Convert.ToInt32(args["minutesToAdd"]);
+		double minuteValue = Convert.ToDouble(args["minutesToAdd"]);
         AddMinutes(minuteValue);
         return true;
     }
@@ -103,8 +107,8 @@ class CPHInline
     public bool Cheers()
     {
         double bitsGiven = Convert.ToDouble(args["bits"]);
-        int bitsDivide = Convert.ToInt32(args["bitsDivide"]);
-        int bitsHundred = Convert.ToInt32(Math.Floor(bitsGiven / bitsDivide));
+        double bitsDivide = Convert.ToDouble(args["bitsDivide"]);
+        double bitsHundred = Convert.ToDouble(Math.Floor(bitsGiven / bitsDivide));
         AddMinutes(bitsHundred);
         return true;
     }

@@ -33,7 +33,7 @@ class CPHInline
     {
         subathonSecondsLeft--;
         TimeSpan time = TimeSpan.FromSeconds(subathonSecondsLeft);
-        string countdownString = time.ToString(@"hh\:mm\:ss");
+        string countdownString = time.ToString(@"d' days 'hh\:mm\:ss");
         if (subathonSecondsLeft == 0)
         {
             StopSubathon("Subathon Complete!");

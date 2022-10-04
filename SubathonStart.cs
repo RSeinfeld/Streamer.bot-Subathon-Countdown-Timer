@@ -20,10 +20,10 @@ class CPHInline
 
     public bool StartSubathon()
     {
-        int maxHourValue = Convert.ToInt32(args["maxHourValue"]);
-        subathonCapInSeconds = maxHourValue * (3600);
-        int hourValue = Convert.ToInt32(args["hourValue"]);
-        subathonSecondsLeft = hourValue * (3600) + 1;
+        double maxHourValue = Convert.ToDouble(args["maxHourValue"]);
+        int subathonCapInSeconds = Convert.ToInt32(Math.Floor(maxHourValue * (3600)));
+        double hourValue = Convert.ToDouble(args["hourValue"]);
+        int subathonSecondsLeft = Convert.ToInt32(Math.Floor(hourValue * (3600) + 1));
         subathontotalTimeInSeconds = subathonSecondsLeft;
         countdownTimer.Start();
         return true;
@@ -33,11 +33,7 @@ class CPHInline
     {
         subathonSecondsLeft--;
         TimeSpan time = TimeSpan.FromSeconds(subathonSecondsLeft);
-        //string countdownString = time.ToString(@"d' days 'hh\:mm\:ss");
-		string countdownString = string.Format("{0}:{1}:{2}", 
-            (int) time.TotalHours, 
-            time.ToString("mm"), 
-            time.ToString("ss"));
+        string countdownString = time.ToString(@"d' days 'hh\:mm\:ss");
         if (subathonSecondsLeft == 0)
         {
             StopSubathon("Subathon Complete!");
@@ -65,22 +61,43 @@ class CPHInline
         countdownTimer.Stop();
     }
 
-    private void AddMinutes(double minutesToAdd)
+    private void AddTime(int timeToAdd)
     {
-		int secondsToAdd = Convert.ToInt32(Math.Floor(minutesToAdd * 60));
+        int secondsToAdd = Convert.ToInt32(timeToAdd);
         if ((subathontotalTimeInSeconds + secondsToAdd) < subathonCapInSeconds)
         {
             subathontotalTimeInSeconds = subathontotalTimeInSeconds + secondsToAdd;
             subathonSecondsLeft = subathonSecondsLeft + secondsToAdd;
-            if (minutesToAdd == 1)
+            if (secondsToAdd < 60)
             {
-                string message = minutesToAdd + " minute has been added to the Subathon";
+                string message = secondsToAdd + " seconds has been added to the Subathon Timer";
                 CPH.SendMessage(message, true);
             }
             else
             {
-                string message = minutesToAdd + " minutes has been added to the Subathon";
-                CPH.SendMessage(message, true);
+                double secondsDouble = Convert.ToDouble(secondsToAdd);
+                int timeMinutes = Convert.ToInt32(Math.Floor(secondsDouble / 60));
+                int timeSeconds = Convert.ToInt32(Math.Floor(secondsDouble % 60));
+                if (timeMinutes == 1 && timeSeconds == 0)
+                {
+                    string message = timeMinutes + " minute has been added to the Subathon Timer";
+                    CPH.SendMessage(message, true);
+                }
+                else if (timeMinutes > 1 && timeSeconds == 0)
+                {
+                    string message = timeMinutes + " minutes has been added to the Subathon Timer";
+                    CPH.SendMessage(message, true);
+                }
+                else if (timeMinutes == 1 && timeSeconds > 0)
+                {
+                    string message = timeMinutes + " minute and " + timeSeconds + " seconds has been added to the Subathon Timer";
+                    CPH.SendMessage(message, true);
+                }
+                else if (timeMinutes > 1 && timeSeconds > 0)
+                {
+                    string message = timeMinutes + " minutes and " + timeSeconds + " seconds has been added to the Subathon Timer";
+                    CPH.SendMessage(message, true);
+                }
             }
         }
         else
@@ -97,19 +114,22 @@ class CPHInline
         return true;
     }
 
-    public bool AddTime()
+    public bool SubAddTime()
     {
-		double minuteValue = Convert.ToDouble(args["minutesToAdd"]);
-        AddMinutes(minuteValue);
+        double timeValue = Convert.ToDouble(args["minutesToAdd"]);
+        int secondsToAdd = Convert.ToInt32(Math.Floor(timeValue * 60));
+        AddTime(secondsToAdd);
         return true;
     }
 
-    public bool Cheers()
+    public bool MoneyAddTime()
     {
-        double bitsGiven = Convert.ToDouble(args["bits"]);
-        double bitsDivide = Convert.ToDouble(args["bitsDivide"]);
-        double bitsHundred = Convert.ToDouble(Math.Floor(bitsGiven / bitsDivide));
-        AddMinutes(bitsHundred);
+        double amountReceived = Convert.ToDouble(args["amountReceived"]);
+        int secondsMultiplier = Convert.ToInt32(args["secondsMultiplier"]);
+        int moneyDivide = Convert.ToInt32(args["moneyDivide"]);
+        int moneyHundred = Convert.ToInt32(Math.Floor(amountReceived / moneyDivide));
+        int secondsToAdd = moneyHundred * secondsMultiplier;
+        AddTime(secondsToAdd);
         return true;
     }
 }

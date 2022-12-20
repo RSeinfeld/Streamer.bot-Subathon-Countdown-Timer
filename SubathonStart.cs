@@ -21,9 +21,9 @@ class CPHInline
     public bool StartSubathon()
     {
         double maxHourValue = Convert.ToDouble(args["maxHourValue"]);
-        int subathonCapInSeconds = Convert.ToInt32(Math.Floor(maxHourValue * (3600)));
         double hourValue = Convert.ToDouble(args["hourValue"]);
-        int subathonSecondsLeft = Convert.ToInt32(Math.Floor(hourValue * (3600) + 1));
+        subathonCapInSeconds = (int)(maxHourValue * 3600);
+        subathonSecondsLeft = (int)(hourValue * 3600 + 1);
         subathontotalTimeInSeconds = subathonSecondsLeft;
         countdownTimer.Start();
         return true;

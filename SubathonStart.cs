@@ -399,4 +399,19 @@ class CPHInline
         CPH.SendMessage($"The subathon has been going for {countdownString}",true);
 		return true;
     }
+
+    public bool CheckRemaining()
+    {
+        if (!timerOn)
+        {
+            CPH.SendMessage("Error: Subathon countdown timer is not currently running.", true);
+            return false;
+        }
+
+        int timeLeft = subathonSecondsLeft;
+        GetCountdownString(timeLeft);
+        CPH.SendMessage($"Time remaining left on the subathon is {countdownString}", true);
+        return true;
+    }
+
 }

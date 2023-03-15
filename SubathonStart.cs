@@ -210,9 +210,22 @@ class CPHInline
     private void BackupWriteToFile()
     {
         GetDirectory();
-        File.WriteAllText(subathonSecondsLeftFile, subathonSecondsLeft.ToString());
-        File.WriteAllText(subathonTotalTimeInSecondsFile, subathonTotalTimeInSeconds.ToString());
-        File.WriteAllText(subathonElapsedSecondsFile, subathonElapsedSeconds.ToString());
+        CPH.Wait(100);
+        CPH.LogDebug(subathonSecondsLeftFile);
+        CPH.LogDebug(subathonTotalTimeInSecondsFile);
+        CPH.LogDebug(subathonElapsedSecondsFile);
+        using (StreamWriter writer = new StreamWriter(subathonSecondsLeftFile))
+        {
+            writer.WriteLine(subathonSecondsLeft);
+        }
+        using (StreamWriter writer = new StreamWriter(subathonTotalTimeInSecondsFile))
+        {
+            writer.WriteLine(subathonTotalTimeInSeconds);
+        }
+        using (StreamWriter writer = new StreamWriter(subathonElapsedSecondsFile))
+        {
+            writer.WriteLine(subathonElapsedSeconds);
+        }
     }
 
     private void GetCountdownString(int timeLeft)

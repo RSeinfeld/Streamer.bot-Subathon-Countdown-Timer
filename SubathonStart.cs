@@ -184,6 +184,27 @@ class CPHInline
         subathonSecondsLeftFile = (secondsLeftBackupDirectory + "subathonSecondsLeft.txt").ToString();
         subathonTotalTimeInSecondsFile = (secondsLeftBackupDirectory + "subathonTotalTimeInSeconds.txt").ToString();
         subathonElapsedSecondsFile = (secondsLeftBackupDirectory + "subathonElapsedSeconds.txt").ToString();
+        // Check if the directory exists, create it if it doesn't
+        if (!Directory.Exists(secondsLeftBackupDirectory))
+        {
+            Directory.CreateDirectory(secondsLeftBackupDirectory);
+            CPH.LogDebug($"Created the directory '{secondsLeftBackupDirectory}'");
+        }
+        if (!File.Exists(subathonSecondsLeftFile)) 
+        {
+            File.Create(subathonSecondsLeftFile).Dispose();
+            CPH.LogDebug($"Created the file '{subathonSecondsLeftFile}'");
+        }
+        if (!File.Exists(subathonTotalTimeInSecondsFile)) 
+        {
+            File.Create(subathonTotalTimeInSecondsFile).Dispose();
+            CPH.LogDebug($"Created the file '{subathonTotalTimeInSecondsFile}'");
+        }
+        if (!File.Exists(subathonElapsedSecondsFile)) 
+        {
+            File.Create(subathonElapsedSecondsFile).Dispose();
+            CPH.LogDebug($"Created the file '{subathonElapsedSecondsFile}'");
+        }
 	}
 
     private void BackupWriteToFile()

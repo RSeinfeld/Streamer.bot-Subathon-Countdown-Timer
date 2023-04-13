@@ -12,37 +12,37 @@ class CPHInline
     public int subathonTotalTimeInSeconds; //total elapsed time after adding time
     public int subathonCapInSeconds;
     public int subathonElapsedSeconds;
-	public int subathonCount;
+    public int subathonCount;
     public string subathonSecondsLeftFile;
     public string subathonTotalTimeInSecondsFile;
     public string subathonElapsedSecondsFile;
-	public string subathonCountFile;
+    public string subathonCountFile;
     public string countdownString;
     public string countdownStringCap;
-	public string countString;
+    public string countString;
     public bool timerOn;
     public bool limitReached;
     public bool messageOnce;
     public bool newSubathonConfirm;
     public bool subathonCancelConfirm;
     public class MediaInputStatus
-	{
-		public int mediaCursor { get; set; }
-		public int mediaDuration { get; set; }
-		public string mediaState { get; set; }
-	}
-	public enum PlayState
-	{
-		//https://wiki.streamer.bot/en/Sub-Actions/Code/CSharp/Available-Methods/OBS#media docs are wrong in current form
-		/** Play is supposed to be 1 but only 0 works */
-		Play = 0,
-		/** Pause is supposed to be 2 but only 1 works */
-		Pause = 1,
-		/** Stop is supposed to be 3 and 3 works */
-		Stop = 3,
-		/** Restart is supposed to be 4 but only 2 works */
-		Restart = 2
-	}
+    {
+        public int mediaCursor { get; set; }
+        public int mediaDuration { get; set; }
+        public string mediaState { get; set; }
+    }
+    public enum PlayState
+    {
+        //https://wiki.streamer.bot/en/Sub-Actions/Code/CSharp/Available-Methods/OBS#media docs are wrong in current form
+        /** Play is supposed to be 1 but only 0 works */
+        Play = 0,
+        /** Pause is supposed to be 2 but only 1 works */
+        Pause = 1,
+        /** Stop is supposed to be 3 and 3 works */
+        Stop = 3,
+        /** Restart is supposed to be 4 but only 2 works */
+        Restart = 2
+    }
     
     public void Init()
     {
@@ -64,7 +64,7 @@ class CPHInline
         messageOnce = false;
         subathonCancelConfirm = false;
         subathonElapsedSeconds = 0;
-		subathonCount = 0;
+        subathonCount = 0;
         // Import arguments from UI
         double maxHourValue = Convert.ToDouble(CPH.GetGlobalVar<double>("maxHourValueGlobal"));
         double hourValue = Convert.ToDouble(args["hourValue"]);
@@ -76,10 +76,10 @@ class CPHInline
         subathonSecondsLeft = (int)remainingDuration.TotalSeconds + 1;
         subathonTotalTimeInSeconds = subathonSecondsLeft; // This is used to calculate when the subathon limit has been reached.
         BackupWriteToFile();
-		
-		ShowSubathon();
-		
-		StartTimer();
+        
+        ShowSubathon();
+        
+        StartTimer();
     }
 
     private void StartTimer()
@@ -125,23 +125,23 @@ class CPHInline
             subathonTotalTimeInSeconds = subathonCapInSeconds;
             limitReached = true;
         }
-		
-		int songLengthSeconds = Convert.ToInt32(CPH.GetGlobalVar<int>("subathonEndAudioLength"));
-		string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
-		string subathonSourceEndAudio = CPH.GetGlobalVar<string>("subathonEndAudio", true);
-		int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
-		//if a sub comes in with a low timer value, change the song play postion so it will still end at 0 on the timer.
+        
+        int songLengthSeconds = Convert.ToInt32(CPH.GetGlobalVar<int>("subathonEndAudioLength"));
+        string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
+        string subathonSourceEndAudio = CPH.GetGlobalVar<string>("subathonEndAudio", true);
+        int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
+        //if a sub comes in with a low timer value, change the song play postion so it will still end at 0 on the timer.
         if (subathonSecondsLeft < songLengthSeconds)
         {
-        	int songTimer = songLengthSeconds - subathonSecondsLeft;
-			int songCursor = (songTimer * 1000);
-			CPH.ObsSendRaw("SetMediaInputCursor", "{\"inputName\":\"" + subathonSourceEndAudio + "\",\"mediaCursor\":" + songCursor + "}", 0);
-		}
-		// if a sub will push the timer over the length of the song, the song file is reset to the beginning.
-		else
-		{
-			EndingSong(PlayState.Pause,false);
-		}
+            int songTimer = songLengthSeconds - subathonSecondsLeft;
+            int songCursor = (songTimer * 1000);
+            CPH.ObsSendRaw("SetMediaInputCursor", "{\"inputName\":\"" + subathonSourceEndAudio + "\",\"mediaCursor\":" + songCursor + "}", 0);
+        }
+        // if a sub will push the timer over the length of the song, the song file is reset to the beginning.
+        else
+        {
+            EndingSong(PlayState.Pause,false);
+        }
 
         if (limitReached == true && messageOnce == false)
         {
@@ -161,7 +161,7 @@ class CPHInline
         
         int timeLeft = subathonSecondsLeft;
         GetCountdownString(timeLeft);
-		countString = subathonCount.ToString();
+        countString = subathonCount.ToString();
         if (subathonSecondsLeft <= 0)
         {
             GetDirectory();
@@ -174,22 +174,22 @@ class CPHInline
         {
             string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
             string subathonSource = CPH.GetGlobalVar<string>("subathonSource", true);
-			string subathonSourceCount = CPH.GetGlobalVar<string>("subathonSourceCount", true);
+            string subathonSourceCount = CPH.GetGlobalVar<string>("subathonSourceCount", true);
             int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
             CPH.ObsSetGdiText(subathonScene, subathonSource, countdownString, obsConnection);
-			CPH.ObsSetGdiText(subathonScene, subathonSourceCount, countString, obsConnection);
-			
-			int songLengthSeconds = Convert.ToInt32(CPH.GetGlobalVar<int>("subathonEndAudioLength"));
-			if (subathonSecondsLeft <= songLengthSeconds)
-			{
-				
-				EndingSong(PlayState.Play, true); //play and show
-			}
-			else
-			{
-				EndingSong(PlayState.Pause, false); //pause and hide
-			}
-			
+            CPH.ObsSetGdiText(subathonScene, subathonSourceCount, countString, obsConnection);
+            
+            int songLengthSeconds = Convert.ToInt32(CPH.GetGlobalVar<int>("subathonEndAudioLength"));
+            if (subathonSecondsLeft <= songLengthSeconds)
+            {
+                
+                EndingSong(PlayState.Play, true); //play and show
+            }
+            else
+            {
+                EndingSong(PlayState.Pause, false); //pause and hide
+            }
+            
         }
     }
 
@@ -199,7 +199,7 @@ class CPHInline
         subathonSecondsLeftFile = (secondsLeftBackupDirectory + "subathonSecondsLeft.txt").ToString();
         subathonTotalTimeInSecondsFile = (secondsLeftBackupDirectory + "subathonTotalTimeInSeconds.txt").ToString();
         subathonElapsedSecondsFile = (secondsLeftBackupDirectory + "subathonElapsedSeconds.txt").ToString();
-		subathonCountFile = (secondsLeftBackupDirectory + "subathonTotalCount.txt").ToString();
+        subathonCountFile = (secondsLeftBackupDirectory + "subathonTotalCount.txt").ToString();
         // Check if the directory exists, create it if it doesn't
         if (!Directory.Exists(secondsLeftBackupDirectory))
         {
@@ -221,7 +221,7 @@ class CPHInline
             File.Create(subathonElapsedSecondsFile).Dispose();
             CPH.LogDebug($"Created the file '{subathonElapsedSecondsFile}'");
         }
-		if (!File.Exists(subathonCountFile)) 
+        if (!File.Exists(subathonCountFile)) 
         {
             File.Create(subathonCountFile).Dispose();
             CPH.LogDebug($"Created the file '{subathonCountFile}'");
@@ -235,7 +235,7 @@ class CPHInline
         CPH.LogDebug(subathonSecondsLeftFile);
         CPH.LogDebug(subathonTotalTimeInSecondsFile);
         CPH.LogDebug(subathonElapsedSecondsFile);
-		CPH.LogDebug(subathonCountFile);
+        CPH.LogDebug(subathonCountFile);
         using (StreamWriter writer = new StreamWriter(subathonSecondsLeftFile))
         {
             writer.WriteLine(subathonSecondsLeft);
@@ -248,7 +248,7 @@ class CPHInline
         {
             writer.WriteLine(subathonElapsedSeconds);
         }
-		using (StreamWriter writer = new StreamWriter(subathonCountFile))
+        using (StreamWriter writer = new StreamWriter(subathonCountFile))
         {
             writer.WriteLine(subathonCount);
         }
@@ -286,18 +286,18 @@ class CPHInline
             countdownStringCap = timeCap.ToString(@"hh\:mm\:ss");
         }
     }
-	
-	private void EndingSong(PlayState state, bool visible)
-	{
-		// DOCUMENTATION STATES NOT ACCURATE FOR MEDIASTATE 'fixed' with enum PlayState
+    
+    private void EndingSong(PlayState state, bool visible)
+    {
+        // DOCUMENTATION STATES NOT ACCURATE FOR MEDIASTATE 'fixed' with enum PlayState
 
-		string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
-		string subathonSourceEndAudio = CPH.GetGlobalVar<string>("subathonEndAudio", true);
-		int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
-		CPH.ObsSetSourceVisibility(subathonScene, subathonSourceEndAudio, visible, obsConnection);
-		CPH.ObsSetMediaState(subathonScene, subathonSourceEndAudio, (int)state, obsConnection);
-	}
-	
+        string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
+        string subathonSourceEndAudio = CPH.GetGlobalVar<string>("subathonEndAudio", true);
+        int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
+        CPH.ObsSetSourceVisibility(subathonScene, subathonSourceEndAudio, visible, obsConnection);
+        CPH.ObsSetMediaState(subathonScene, subathonSourceEndAudio, (int)state, obsConnection);
+    }
+    
     public bool StartSubathon()
     {
         // Check if timer is currently running
@@ -352,7 +352,7 @@ class CPHInline
                 subathonTotalTimeInSeconds = Int32.Parse(File.ReadAllText(subathonTotalTimeInSecondsFile)); // Recalling seconds left with time added
                 subathonElapsedSeconds = Int32.Parse(File.ReadAllText(subathonElapsedSecondsFile)); // Recall subathon elapsed
                 subathonCount = Int32.Parse(File.ReadAllText(subathonCountFile)); // Recall added subs
-				StartTimer();
+                StartTimer();
             }
             else
             {
@@ -411,40 +411,40 @@ class CPHInline
                 File.WriteAllText(subathonSecondsLeftFile, "");
                 CPH.SendMessage("The subathon has been cancelled!", true);
                 StopSubathon("Subathon cancelled!");
-				EndingSong(PlayState.Pause,false);
+                EndingSong(PlayState.Pause,false);
             }
         }
 
         return true;
     }
-	
-	public bool ShowSubathon()
-	{
-		string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
-		string subathonSource = CPH.GetGlobalVar<string>("subathonSource", true);
-		string subathonSourceCount = CPH.GetGlobalVar<string>("subathonSourceCount", true);
-		int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
-		CPH.ObsSetSourceVisibility(subathonScene, subathonSource, true, obsConnection);
-		CPH.ObsSetSourceVisibility(subathonScene, subathonSourceCount, true, obsConnection);
-	
-		return true;
-	}
-	
-	public bool HideSubathon()
-	{
-		string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
-		string subathonSource = CPH.GetGlobalVar<string>("subathonSource", true);
-		string subathonSourceCount = CPH.GetGlobalVar<string>("subathonSourceCount", true);
-		string subathonSourceEndAudio = CPH.GetGlobalVar<string>("subathonEndAudio", true);
-		int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
-		CPH.ObsSetSourceVisibility(subathonScene, subathonSource, false, obsConnection);
-		CPH.ObsSetSourceVisibility(subathonScene, subathonSourceCount, false, obsConnection);
-		CPH.ObsSetSourceVisibility(subathonScene, subathonSourceEndAudio, false, obsConnection);
-		CPH.ObsSetGdiText(subathonScene, subathonSource, "00:00:00", obsConnection);
-		CPH.ObsSetMediaSourceFile(subathonScene, subathonSourceEndAudio, "", obsConnection);
-		
-		return true;
-	}
+    
+    public bool ShowSubathon()
+    {
+        string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
+        string subathonSource = CPH.GetGlobalVar<string>("subathonSource", true);
+        string subathonSourceCount = CPH.GetGlobalVar<string>("subathonSourceCount", true);
+        int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
+        CPH.ObsSetSourceVisibility(subathonScene, subathonSource, true, obsConnection);
+        CPH.ObsSetSourceVisibility(subathonScene, subathonSourceCount, true, obsConnection);
+    
+        return true;
+    }
+    
+    public bool HideSubathon()
+    {
+        string subathonScene = CPH.GetGlobalVar<string>("subathonScene", true);
+        string subathonSource = CPH.GetGlobalVar<string>("subathonSource", true);
+        string subathonSourceCount = CPH.GetGlobalVar<string>("subathonSourceCount", true);
+        string subathonSourceEndAudio = CPH.GetGlobalVar<string>("subathonEndAudio", true);
+        int obsConnection = CPH.GetGlobalVar<int>("subathonObsConnectionGlobal", true);
+        CPH.ObsSetSourceVisibility(subathonScene, subathonSource, false, obsConnection);
+        CPH.ObsSetSourceVisibility(subathonScene, subathonSourceCount, false, obsConnection);
+        CPH.ObsSetSourceVisibility(subathonScene, subathonSourceEndAudio, false, obsConnection);
+        CPH.ObsSetGdiText(subathonScene, subathonSource, "00:00:00", obsConnection);
+        CPH.ObsSetMediaSourceFile(subathonScene, subathonSourceEndAudio, "", obsConnection);
+        
+        return true;
+    }
 
     public bool SubAddTime()
     {
@@ -453,11 +453,11 @@ class CPHInline
         AddTime(secondsToAdd);
         return true;
     }
-	
-	public bool SubAddCount()
+    
+    public bool SubAddCount()
     {
-		int pointsToAdd = Convert.ToInt32(args["pointsToAdd"]);
-		subathonCount += pointsToAdd;
+        int pointsToAdd = Convert.ToInt32(args["pointsToAdd"]);
+        subathonCount += pointsToAdd;
         return true;
     }
 
@@ -471,15 +471,15 @@ class CPHInline
         AddTime(secondsToAdd);
         return true;
     }
-	
-	public bool MoneyAddCount()
+    
+    public bool MoneyAddCount()
     {
-		double amountReceived = Convert.ToDouble(args["amountReceived"]);
+        double amountReceived = Convert.ToDouble(args["amountReceived"]);
         int moneyDivide = Convert.ToInt32(args["moneyDivide"]);
         int moneyHundred = Convert.ToInt32(Math.Floor(amountReceived / moneyDivide));
-		int pointValue = Convert.ToInt32(args["pointsToAdd"]);
-		int pointsToAdd = moneyHundred * pointValue;
-		subathonCount += pointsToAdd;
+        int pointValue = Convert.ToInt32(args["pointsToAdd"]);
+        int pointsToAdd = moneyHundred * pointValue;
+        subathonCount += pointsToAdd;
         return true;
     }
 

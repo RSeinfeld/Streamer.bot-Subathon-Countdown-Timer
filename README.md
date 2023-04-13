@@ -14,7 +14,7 @@ I won't go into this unless someone asks for it. Both portable and desktop insta
 ## Set up OBS
 ### Enable Websocket Server
 - In OBS go to Tools ---> Websocket Server Settings
-- 
+
 ![Enable Websocket](/Images/OBSWebsocket.png)
 ### Set up Scene for Subathon Timer overlay
 1. Create a Scene that will contain your subathon Overlay. I recommend a name like ``[NS] SubathonTimer`` Where the NS stands for 'nested scene'. This naming convention will make it easy to find when added on top of other scenes and be easy to pinpoint and disable later.

@@ -17,7 +17,14 @@ I won't go into this unless someone asks for it. Both portable and desktop insta
 
 ![Enable Websocket](/Images/OBSWebsocket.png)
 
+- Enable the websocket server and apply changes.
+
+![Apply Websocket](/Images/OBSWebsocketSettings.png)
+
 ### Set up Scene for Subathon Timer overlay
+
+![Set up Scene](/Images/OBSScenes.png)
+
 1. Create a Scene that will contain your subathon Overlay. I recommend a name like ``[NS] SubathonTimer`` Where the NS stands for 'nested scene'. This naming convention will make it easy to find when added on top of other scenes and be easy to pinpoint and disable later.
 2. In the subathon scene, create the following sources:
     - A GDI+ Text source for the timer. It will be called ``[TS] SubathonCounter`` in this. TS for 'text source'.
@@ -41,7 +48,7 @@ Only the broadcaster account is necessary (in order to pull all of the gift sub 
 
 ![OBS Connection](/Images/OBSConnection.png)
 
-2. Set the name, Websocket v5.x, Host address, port, and password. The `Auto-connect at Startup` and `Reconnect on Disconnect` are optional but are recommended.
+2. Set the name, Websocket v5.x, Host address, port, and password. The `Auto-connect at Startup` and `Reconnect on Disconnect` are optional but are recommended. In OBS, [Tools ---> Websocket Server Settings](#Enable-Websocket-Server), hitting `Show Connect Info` will provide this information.
 
 ![OBS Websocket Connect](/Images/OBSWebsocketConnect.png)
 

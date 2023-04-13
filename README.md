@@ -33,16 +33,16 @@ I won't go into this unless someone asks for it. Both portable and desktop insta
     - Any additional image/browser sources you desire for decorating the overlay.
 3. Position and size the text sources where you want. Ctrl + E will bring up additional positioning options. Set the font as desired. A monospaced font will help since the colons and numbers in "00:00:00" won't be moving around every second as it changes.
 ---
-# Streamer.bot Setup
+# Streamer.bot Setup 
 The developers have much more expansive documentation [here](https://wiki.streamer.bot/en/home) if you have additional questions. These will just be directions for a quick setup that will be able to run the subathon timer.
-## Connect to Twitch
+## Connect to Twitch [^1]
 [![Twitch login](https://wiki.streamer.bot/quick-start/connect_to_twitch_.png)](https://wiki.streamer.bot/en/Quick-Start/Twitch)
 1. Navigate through the following: Platforms ---> Twitch ----> Accounts
 2. Press the Connect to Twitch button to bring up an authorization webpage that will detail all the permissions Streamer.bot wants to have access to on your behalf
 
 Only the broadcaster account is necessary (in order to pull all of the gift sub information to increase the timer). Connecting the bot account allows chat messages to be sent from that account instead of the streaming account.
 
-## Connect to OBS
+## Connect to OBS [^2]
 
 1. Navigate through the following: Stream Apps ---> OBS. Right Click in the top left box and add websocket details from OBS set up earlier.
 
@@ -63,7 +63,7 @@ TlM0RR+LCAAAAAAABADtfWtTIsuW9veJmP/g2XFOxNxyv3mtypyI94PSSmOre3sDZfp8yFsBzfUIqDhx
 ![import](Images/StreamerBotImport.png)
 
 
-## Steps after import
+## Steps after import [^3]
 
 ### 1. Streamer Bot > Actions > `Subathon Timer Code` > Double-click `Execute Code (Subathon Timer)` > Click the `References` tab > Click `Find Refs` and make sure System.dll is added to the list.
 - NOTE: In more recent versions of Streamer Bot, this step may be unnecessary.
@@ -124,3 +124,7 @@ TlM0RR+LCAAAAAAABADtfWtTIsuW9veJmP/g2XFOxNxyv3mtypyI94PSSmOre3sDZfp8yFsBzfUIqDhx
 ### 6.  Action `Subathon Done Action` will be triggered once the timer runs out.
 
 ![subathonDone](https://user-images.githubusercontent.com/8848167/208854102-d247ae06-b35f-4a2a-a9e9-6f00ab72939e.png)
+
+[^1]: https://wiki.streamer.bot/en/Quick-Start/Twitch
+[^2]: https://wiki.streamer.bot/en/Quick-Start/OBS
+[^3]: https://extensions.streamer.bot/en/extensions/subathon-countdown-timer-in-c-sharp
